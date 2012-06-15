@@ -29,9 +29,9 @@ GIT_BEGIN_DECL
 #define GIT_SORT_NONE			(0)
 
 /**
- * Sort the repository contents in topological order
- * (parents before children); this sorting mode
- * can be combined with time sorting.
+ * Sort the repository contents in topological order (i.e.
+ * descendant commits are shown before their parents);
+ * this sorting mode can be combined with time sorting.
  */
 #define GIT_SORT_TOPOLOGICAL (1 << 0)
 
