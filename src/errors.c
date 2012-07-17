@@ -14,6 +14,11 @@
  * New error handling
  ********************************************/
 
+static git_error g_git_no_error = {
+	"Success",
+	GIT_OK
+};
+
 static git_error g_git_oom_error = {
 	"Out of memory",
 	GITERR_NOMEMORY
@@ -109,11 +114,11 @@ void giterr_set_regex(const regex_t *regex, int error_code)
 
 void giterr_clear(void)
 {
-	GIT_GLOBAL->last_error = NULL;
+	GIT_GLOBAL->last_error = &g_git_no_error;
 }
 
 const git_error *giterr_last(void)
 {
-	return GIT_GLOBAL->last_error;
+	return GIT_GLOBAL->last_error ? GIT_GLOBAL->last_error : &g_git_no_error;
 }
 

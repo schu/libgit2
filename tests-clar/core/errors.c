@@ -8,11 +8,10 @@ void test_core_errors__new_school(void)
 	char *str_in_error;
 
 	giterr_clear();
-	cl_assert(giterr_last() == NULL);
+	cl_assert(giterr_last()->klass == GIT_OK);
 
 	giterr_set_oom(); /* internal fn */
 
-	cl_assert(giterr_last() != NULL);
 	cl_assert(giterr_last()->klass == GITERR_NOMEMORY);
 	str_in_error = strstr(giterr_last()->message, "memory");
 	cl_assert(str_in_error != NULL);
@@ -21,12 +20,12 @@ void test_core_errors__new_school(void)
 
 	giterr_set(GITERR_REPOSITORY, "This is a test"); /* internal fn */
 
-	cl_assert(giterr_last() != NULL);
+	cl_assert(giterr_last()->klass == GITERR_REPOSITORY);
 	str_in_error = strstr(giterr_last()->message, "This is a test");
 	cl_assert(str_in_error != NULL);
 
 	giterr_clear();
-	cl_assert(giterr_last() == NULL);
+	cl_assert(giterr_last()->klass == GIT_OK);
 
 	do {
 		struct stat st;
@@ -36,7 +35,7 @@ void test_core_errors__new_school(void)
 	} while (false);
 	giterr_set(GITERR_OS, "stat failed"); /* internal fn */
 
-	cl_assert(giterr_last() != NULL);
+	cl_assert(giterr_last()->klass == GITERR_OS);
 	str_in_error = strstr(giterr_last()->message, "stat failed");
 	cl_assert(str_in_error != NULL);
 	cl_assert(git__prefixcmp(str_in_error, "stat failed: ") == 0);
@@ -49,7 +48,7 @@ void test_core_errors__new_school(void)
 	cl_assert(GetProcessId(NULL) == 0);
 	giterr_set(GITERR_OS, "GetProcessId failed"); /* internal fn */
 
-	cl_assert(giterr_last() != NULL);
+	cl_assert(giterr_last()->klass == GITERR_OS);
 	str_in_error = strstr(giterr_last()->message, "GetProcessId failed");
 	cl_assert(str_in_error != NULL);
 	cl_assert(git__prefixcmp(str_in_error, "GetProcessId failed: ") == 0);
