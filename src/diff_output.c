@@ -846,6 +846,7 @@ static int diff_patch_line_cb(
 
 	GIT_UNUSED(delta);
 	GIT_UNUSED(range);
+	GIT_UNUSED(last);
 
 	assert(patch->hunks_size > 0);
 	assert(patch->hunks != NULL);
