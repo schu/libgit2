@@ -18,7 +18,6 @@
 #include "git2/pack.h"
 #include "git2/commit.h"
 #include "git2/tag.h"
-#include "git2/indexer.h"
 #include "git2/config.h"
 
 struct unpacked {
@@ -167,6 +166,15 @@ static void rehash(git_packbuilder *pb)
 	}
 }
 
+GIT_INLINE(bool) in_pack(git_packbuilder *pb, const git_oid *oid)
+{
+	khiter_t pos;
+	pos = kh_get(oid, pb->object_ix, oid);
+	if (pos != kh_end(pb->object_ix))
+		return true;
+	return false;
+}
+
 int git_packbuilder_insert(git_packbuilder *pb, const git_oid *oid,
 			   const char *name)
 {
@@ -178,8 +186,7 @@ int git_packbuilder_insert(git_packbuilder *pb, const git_oid *oid,
 
 	/* If the object already exists in the hash table, then we don't
 	 * have any work to do */
-	pos = kh_get(oid, pb->object_ix, oid);
-	if (pos != kh_end(pb->object_ix))
+	if (in_pack(pb, oid))
 		return 0;
 
 	if (pb->nr_objects >= pb->nr_alloc) {
@@ -1303,6 +1310,9 @@ int git_packbuilder_insert_tree(git_packbuilder *pb, const git_oid *oid)
 {
 	git_tree *tree;
 	struct tree_walk_context context = { pb, GIT_BUF_INIT };
+
+	if (in_pack(pb, oid))
+		return 0;
 
 	if (git_tree_lookup(&tree, pb->repo, oid) < 0 ||
 	    git_packbuilder_insert(pb, oid, NULL) < 0)

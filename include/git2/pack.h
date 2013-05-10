@@ -85,7 +85,8 @@ GIT_EXTERN(int) git_packbuilder_insert(git_packbuilder *pb, const git_oid *id, c
 /**
  * Insert a root tree object
  *
- * This will add the tree as well as all referenced trees and blobs.
+ * This will add the tree as well as all referenced subtrees and blobs,
+ * but only if the given oid isn't found in the pack yet.
  *
  * @param pb The packbuilder
  * @param id The oid of the root tree
